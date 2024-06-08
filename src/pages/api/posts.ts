@@ -1,12 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { sql } from "@vercel/postgres";
  
-type ResponseData = {
-  message: string
-}
- 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
+  res: NextApiResponse
 ) {
-  res.status(200).json({ message: 'Hello from Next.js!' })
+  if (req.method === 'POST') {
+    const { content, image_url } = req.body;
+    await sql`INSERT INTO posts (content, image_url)
+      VALUES (${content}, ${image_url});
+    `;
+    res.status(204).end();
+  } else {
+    const { rows } = await sql`SELECT * from POSTS`;
+    res.status(200).json(rows);
+  }
 }
