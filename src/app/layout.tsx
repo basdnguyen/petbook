@@ -1,10 +1,11 @@
 'use client';
 
 import { Inter } from "next/font/google";
-import globalCss from '@go1d/go1d/build/foundations/globalCSS';
-import { Provider } from "@go1d/go1d";
-
-globalCss();
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import './globals.css';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,10 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Provider>
-          {children}
-        </Provider>
+      <head>
+        <link rel="icon" href="/icon.ico" sizes="any" />
+      </head>
+      <body className={`${inter.className}`}>
+        {children}
       </body>
     </html>
   );
