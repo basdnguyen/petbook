@@ -1,7 +1,7 @@
 'use client';
 
 import { Post, PostData } from "@/components/Post";
-import { AppBar, Box, Container, InputBase, Toolbar, Typography, alpha, styled } from "@mui/material";
+import { AppBar, Box, Button, Container, InputBase, Toolbar, Typography, alpha, styled } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 import Image from "next/image";
@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
+  border: `1px solid ${theme.palette.primary.main}`,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
@@ -51,6 +52,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function Home() {
 
   const [posts, setPosts] = useState<PostData[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const loadPosts = async () => {
     const { data } = await axios.get('/api/posts');
@@ -59,6 +61,11 @@ export default function Home() {
 
   useEffect(() => {
     loadPosts();
+  }, []);
+
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    setIsLoggedIn(!!jwt);
   }, []);
 
   const deletePost = async (post: PostData) => {
@@ -71,13 +78,14 @@ export default function Home() {
       height: '100vh',
       overflow: 'hidden',
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      gap: 1,
     }}>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ backgroundColor: 'white' }}>
         <Container maxWidth='sm'>
           <Toolbar disableGutters>
             <Image src='/icon.ico' alt='logo' width={30} height={30}></Image>
-            <Search>
+            {/* <Search>
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
@@ -85,26 +93,47 @@ export default function Home() {
                 placeholder="Search…"
                 inputProps={{ 'aria-label': 'search' }}
               />
-            </Search>
+            </Search> */}
+            <Box sx={{ flexGrow: 1 }}></Box>
             <Box sx={{
               display: 'flex',
               gap: 1,
               alignItems: 'center'
             }}>
-              <Image
-                src='/default-profile-picture.jpeg'
-                alt='default profile picture'
-                width={30} height={30}
-                style={{
-                  borderRadius: '50%'
-                }}></Image>
-                <Typography>Bang</Typography>
+              {isLoggedIn && (
+                <>
+                  <Image
+                    src='/default-profile-picture.jpeg'
+                    alt='default profile picture'
+                    width={30} height={30}
+                    style={{
+                      borderRadius: '50%'
+                    }}></Image>
+                  <Typography>Bang</Typography>
+                </>
+              )}
+              {!isLoggedIn && (
+                <>
+                  <Button variant="outlined">Log In</Button>
+                  <Button variant="contained">Sign Up</Button>
+                </>
+              )}
               </Box>
           </Toolbar>
         </Container>
       </AppBar>
+      <Container maxWidth='sm' sx={{
+        display: 'flex',
+        gap: 1,
+        alignItems: 'center'
+      }}>
+        <Button variant="outlined">Log In</Button>
+        <Typography color='GrayText'>or</Typography>
+        <Button variant="contained">Sign Up</Button>
+        <Typography color='GrayText'>to post something...</Typography>
+      </Container>
       <Container maxWidth='sm' sx={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: 0, overflowY: 'auto', flex: '1 1 auto' }}>
-        {posts.map(post => <Post post={post} onDelete={deletePost} />)}
+        {posts.map(post => <Post key={post.id} post={post} onDelete={deletePost} />)}
       </Container>
     </Container>
   );
