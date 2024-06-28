@@ -19,7 +19,12 @@ export default async function handler(
   const user = rows[0];
   const inputPassword = await bcrypt.hash(password, user.salt);
   if(inputPassword === user.password) {
-    const token = jwt.sign(user, secretKey, { expiresIn: '1h' });
+    const token = jwt.sign( {
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+    }, secretKey, { expiresIn: '1h' });
     res.status(200).send({ jwt: token });
   }
   res.status(401)

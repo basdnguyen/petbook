@@ -3,6 +3,7 @@
 import { Box, Button, Container, TextField } from "@mui/material";
 import axios from "axios";
 import { useFormik } from "formik";
+import { useRouter } from "next/navigation";
 
 interface FormData {
   first_name: string;
@@ -12,8 +13,11 @@ interface FormData {
 }
 
 export default function SignUp() {
+  const router = useRouter();
+  
   const signUp = async (values: FormData) => {
     await axios.post('/api/signup', values);
+    router.push('/login');
   }
   const formik = useFormik({
     initialValues: {

@@ -1,11 +1,12 @@
 'use client';
 
 import { Post, PostData } from "@/components/Post";
-import { AppBar, Box, Button, Container, InputBase, Toolbar, Typography, alpha, styled } from "@mui/material";
+import { AppBar, Box, Button, Container, InputBase, TextField, Toolbar, Typography, alpha, styled } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import axios from "axios";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AppContext } from "@/components/AppContext";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -52,7 +53,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function Home() {
 
   const [posts, setPosts] = useState<PostData[]>([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user } = useContext(AppContext);
 
   const loadPosts = async () => {
     const { data } = await axios.get('/api/posts');
@@ -61,11 +62,6 @@ export default function Home() {
 
   useEffect(() => {
     loadPosts();
-  }, []);
-
-  useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    setIsLoggedIn(!!jwt);
   }, []);
 
   const deletePost = async (post: PostData) => {
@@ -100,7 +96,7 @@ export default function Home() {
               gap: 1,
               alignItems: 'center'
             }}>
-              {isLoggedIn && (
+              {user && (
                 <>
                   <Image
                     src='/default-profile-picture.jpeg'
@@ -109,30 +105,41 @@ export default function Home() {
                     style={{
                       borderRadius: '50%'
                     }}></Image>
-                  <Typography>Bang</Typography>
+                  <Typography color='InfoText'>{user.first_name}</Typography>
                 </>
               )}
-              {!isLoggedIn && (
-                <>
-                  <Button variant="outlined">Log In</Button>
-                  <Button variant="contained">Sign Up</Button>
-                </>
-              )}
-              </Box>
+            </Box>
           </Toolbar>
         </Container>
       </AppBar>
-      <Container maxWidth='sm' sx={{
-        display: 'flex',
-        gap: 1,
-        alignItems: 'center'
-      }}>
-        <Button variant="outlined">Log In</Button>
-        <Typography color='GrayText'>or</Typography>
-        <Button variant="contained">Sign Up</Button>
-        <Typography color='GrayText'>to post something...</Typography>
-      </Container>
+      {!user && (
+        <Container maxWidth='sm' sx={{
+          display: 'flex',
+          gap: 1,
+          alignItems: 'center'
+        }}>
+          <Button variant="outlined" href="/login">Log In</Button>
+          <Typography color='GrayText'>or</Typography>
+          <Button variant="contained" href="/signup">Sign Up</Button>
+          <Typography color='GrayText'>to post something...</Typography>
+        </Container>
+      )}
       <Container maxWidth='sm' sx={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: 0, overflowY: 'auto', flex: '1 1 auto' }}>
+        {user && (
+          <Box maxWidth='sm' sx={{
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: 'white',
+            padding: 1,
+          }}>
+            <TextField
+              required
+              id="message"
+              placeholder="Post something..."
+              sx={{ flexGrow: 1 }}
+            />
+          </Box>
+        )}
         {posts.map(post => <Post key={post.id} post={post} onDelete={deletePost} />)}
       </Container>
     </Container>
