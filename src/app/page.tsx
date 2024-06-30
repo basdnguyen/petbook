@@ -1,55 +1,15 @@
 'use client';
 
 import { Post, PostData } from "@/components/Post";
-import { AppBar, Box, Button, Container, IconButton, InputBase, TextField, Toolbar, Typography, alpha, styled } from "@mui/material";
+import { AppBar, Avatar, Box, Button, Container, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Toolbar, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CldImage, CldUploadWidget } from 'next-cloudinary';
 import axios from "axios";
 import Image from "next/image";
-import { SyntheticEvent, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/components/AppContext";
-
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  border: `1px solid ${theme.palette.primary.main}`,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  flexGrow: 1,
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(2),
-    width: 'auto',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
-    },
-  },
-}));
+import { blue } from "@mui/material/colors";
+import { Delete, Logout } from "@mui/icons-material";
 
 export default function Home() {
 
@@ -57,7 +17,7 @@ export default function Home() {
   const [imagePublicId, setImagePublicId] = useState('');
   const [isPosting, setIsPosting] = useState(false);
   const [message, setMessage] = useState('');
-  const { user, jwt } = useContext(AppContext);
+  const { user, jwt, setJwt, setUser } = useContext(AppContext);
 
   const loadPosts = async () => {
     const { data } = await axios.get('/api/posts');
@@ -103,56 +63,76 @@ export default function Home() {
     setIsPosting(false);
   }
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogOut = () => {
+    setUser(null);
+    setJwt(null);
+    localStorage.removeItem('jwt');
+  }
+
   return (
     <Container disableGutters maxWidth={false} sx={{
       height: '100vh',
-      overflow: 'hidden',
+      overflowY: 'auto',
       display: 'flex',
       flexDirection: 'column',
       gap: 1,
+      paddingBottom: 3,
     }}>
-      <AppBar position="static" sx={{ backgroundColor: 'white' }}>
-        <Container maxWidth='sm'>
-          <Toolbar disableGutters>
-            <Image src='/icon.ico' alt='logo' width={30} height={30}></Image>
-            {/* <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </Search> */}
-            <Box sx={{ flexGrow: 1 }}></Box>
-            <Box sx={{
-              display: 'flex',
-              gap: 1,
-              alignItems: 'center'
-            }}>
-              {user && (
-                <>
-                  <Image
-                    src='/default-profile-picture.jpeg'
-                    alt='default profile picture'
-                    width={30} height={30}
-                    style={{
-                      borderRadius: '50%'
-                    }}></Image>
-                  <Typography color='InfoText'>{user.first_name}</Typography>
-                </>
-              )}
-              {!user && (
-                <>
-                  <Button variant="outlined" href="/login">Log In</Button>
-                  <Button variant="contained" href="/signup">Sign Up</Button>
-                </>
-              )}
-            </Box>
-          </Toolbar>
-        </Container>
+      <AppBar position="sticky" sx={{ backgroundColor: 'white', paddingX: 5 }}>
+        <Toolbar disableGutters>
+          <Image src='/icon.ico' alt='logo' width={30} height={30}></Image>
+          <Box sx={{ flexGrow: 1 }}></Box>
+          <Box sx={{
+            display: 'flex',
+            gap: 1,
+            alignItems: 'center'
+          }}>
+            {user && (
+              <>
+                <IconButton aria-label="more-menu-toggle" id="more-menu-toggle"
+                  aria-controls={open ? 'more-menu' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? 'true' : undefined}
+                  onClick={handleClick}>
+                  <Avatar src='' sx={{ bgcolor: blue[500] }}>{user.first_name[0]}</Avatar>
+                </IconButton>
+                <Menu
+                  id="more-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  MenuListProps={{
+                    'aria-labelledby': 'more-menu-toggle',
+                  }}
+                >
+                  <MenuItem onClick={handleLogOut}>
+                    <ListItemIcon>
+                      <Logout fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Log Out</ListItemText>
+                  </MenuItem>
+                </Menu>
+              </>
+            )}
+            {!user && (
+              <>
+                <Button variant="outlined" href="/login">Log In</Button>
+                <Button variant="contained" href="/signup">Sign Up</Button>
+              </>
+            )}
+          </Box>
+        </Toolbar>
       </AppBar>
-      <Container maxWidth='sm' sx={{ display: 'flex', flexDirection: 'column', gap: 1, padding: 0, overflowY: 'auto', flex: '1 1 auto' }}>
+      <Container maxWidth='sm' sx={{ display: 'flex', flexDirection: 'column', gap: 1, padding: 0, flex: '1 1 auto' }}>
         {user && (
           <Box maxWidth='sm' sx={{
             display: 'flex',

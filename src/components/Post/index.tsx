@@ -11,8 +11,6 @@ export interface PostData {
   created_at: string;
 }
 
-const URL_REGEX = RegExp('https:\/\/(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?');
-
 interface Props {
   post: PostData;
 

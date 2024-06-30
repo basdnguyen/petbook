@@ -9,9 +9,9 @@ export interface User {
 
 export interface AppState {
   user: User | null;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
   jwt: string | null;
-  setJwt: (jwt: string) => void;
+  setJwt: (jwt: string | null) => void;
 }
 
 export const AppContext = createContext<AppState>({
