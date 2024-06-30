@@ -12,7 +12,7 @@ export default async function handler(
     `;
     res.status(204).end();
   } else {
-    const { rows } = await sql`SELECT * from POSTS`;
+    const { rows } = await sql`SELECT * FROM POSTS ORDER BY created_at DESC`;
     res.status(200).json(rows);
   }
 }

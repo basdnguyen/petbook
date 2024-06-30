@@ -2,6 +2,7 @@ import { MoreHoriz, Delete } from "@mui/icons-material"
 import { Box, Container, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Typography } from "@mui/material"
 import { useState } from "react";
 import Image from 'next/image';
+import { CldImage } from "next-cloudinary";
 
 export interface PostData {
   id: string;
@@ -61,20 +62,13 @@ export const Post: React.FunctionComponent<Props> = ({ post, onDelete }) => {
       <Typography color='InfoText'>
         {post.content}
       </Typography>
-      <Box>
-        {URL_REGEX.test(post.image_url) &&
-          <Image
-            src={post.image_url}
-            alt={post.content}
-            width={200} height={200}
-            sizes="100vw"
-            style={{
-              width: '100%',
-              height: 'auto',
-            }}>
-          </Image>
-        }
-      </Box>
+      <CldImage
+        width="960"
+        height="600"
+        src={post.image_url}
+        sizes="100vw"
+        alt="Description of my image"
+      />
     </Box>
   )
 }

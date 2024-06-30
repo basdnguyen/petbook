@@ -1,11 +1,12 @@
 'use client';
 
 import { Post, PostData } from "@/components/Post";
-import { AppBar, Box, Button, Container, InputBase, TextField, Toolbar, Typography, alpha, styled } from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
+import { AppBar, Box, Button, Container, IconButton, InputBase, TextField, Toolbar, Typography, alpha, styled } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+import { CldImage, CldUploadWidget } from 'next-cloudinary';
 import axios from "axios";
 import Image from "next/image";
-import { useContext, useEffect, useState } from "react";
+import { SyntheticEvent, useContext, useEffect, useState } from "react";
 import { AppContext } from "@/components/AppContext";
 
 const Search = styled('div')(({ theme }) => ({
@@ -53,7 +54,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function Home() {
 
   const [posts, setPosts] = useState<PostData[]>([]);
-  const { user } = useContext(AppContext);
+  const [imagePublicId, setImagePublicId] = useState('');
+  const [isPosting, setIsPosting] = useState(false);
+  const [message, setMessage] = useState('');
+  const { user, jwt } = useContext(AppContext);
 
   const loadPosts = async () => {
     const { data } = await axios.get('/api/posts');
@@ -67,6 +71,36 @@ export default function Home() {
   const deletePost = async (post: PostData) => {
     await axios.delete(`/api/post/${post.id}`);
     loadPosts();
+  }
+
+  function onSuccess(result: any, widget: any) {
+    widget.close({
+      quiet: true,
+    });
+    setImagePublicId(result.info?.public_id);
+  }
+
+  function deleteUploadImage() {
+
+  }
+
+  function onChangeMessage(event: React.ChangeEvent<HTMLInputElement>) {
+    setMessage(event.target.value);
+  }
+
+  async function doPost() {
+    setIsPosting(true);
+    await axios.post('/api/posts', {
+      content: message,
+      image_url: imagePublicId
+    }, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      }
+    });
+    setImagePublicId('');
+    loadPosts();
+    setIsPosting(false);
   }
 
   return (
@@ -108,36 +142,64 @@ export default function Home() {
                   <Typography color='InfoText'>{user.first_name}</Typography>
                 </>
               )}
+              {!user && (
+                <>
+                  <Button variant="outlined" href="/login">Log In</Button>
+                  <Button variant="contained" href="/signup">Sign Up</Button>
+                </>
+              )}
             </Box>
           </Toolbar>
         </Container>
       </AppBar>
-      {!user && (
-        <Container maxWidth='sm' sx={{
-          display: 'flex',
-          gap: 1,
-          alignItems: 'center'
-        }}>
-          <Button variant="outlined" href="/login">Log In</Button>
-          <Typography color='GrayText'>or</Typography>
-          <Button variant="contained" href="/signup">Sign Up</Button>
-          <Typography color='GrayText'>to post something...</Typography>
-        </Container>
-      )}
       <Container maxWidth='sm' sx={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: 0, overflowY: 'auto', flex: '1 1 auto' }}>
         {user && (
           <Box maxWidth='sm' sx={{
             display: 'flex',
-            alignItems: 'center',
+            flexDirection: 'column',
             backgroundColor: 'white',
             padding: 1,
+            gap: 1,
           }}>
-            <TextField
-              required
-              id="message"
-              placeholder="Post something..."
-              sx={{ flexGrow: 1 }}
-            />
+            {!imagePublicId && (
+              <CldUploadWidget uploadPreset="default" onSuccess={onSuccess}>
+                {({ open }) => {
+                  return (
+                    <Button onClick={() => open()}>
+                      Share a moment of your pet
+                    </Button>
+                  );
+                }}
+              </CldUploadWidget>
+            )}
+            {imagePublicId && (
+              <>
+                <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                  <CldImage
+                    width="960"
+                    height="600"
+                    src={imagePublicId}
+                    sizes="100vw"
+                    alt="Description of my image"
+                  />
+                  <Button variant="contained" aria-label='Remove Image' color='info'
+                    sx={{ position: 'absolute', top: 4, right: 4, padding: '4px', minWidth: 32 }}
+                    onClick={deleteUploadImage}
+                  >
+                    <DeleteIcon />
+                  </Button>
+                  <TextField
+                    required
+                    id="message"
+                    placeholder="Say something about the image"
+                    value={message}
+                    onChange={onChangeMessage}
+                    sx={{ flexGrow: 1, borderTopRightRadius: 0, borderTopLeftRadius: 0 }}
+                  />
+                </Box>
+                <Button variant="contained" color='primary' onClick={doPost} disabled={isPosting}>Post</Button>
+              </>
+            )}
           </Box>
         )}
         {posts.map(post => <Post key={post.id} post={post} onDelete={deletePost} />)}

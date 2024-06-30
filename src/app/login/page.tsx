@@ -29,10 +29,8 @@ export default function LogIn() {
   }
   const formik = useFormik({
     initialValues: {
-      email: '',
-      first_name: '',
-      last_name: '',
-      password: ''
+      email: 'guest.welcome@petbook.com',
+      password: '123456'
     },
     onSubmit: logIn,
   });
