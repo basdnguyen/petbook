@@ -1,13 +1,14 @@
 import { MoreHoriz, Delete } from "@mui/icons-material"
-import { Box, Container, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Typography } from "@mui/material"
+import { Avatar, Box, Card, CardContent, CardHeader, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Typography } from "@mui/material"
 import { useState } from "react";
-import Image from 'next/image';
 import { CldImage } from "next-cloudinary";
+import { red } from "@mui/material/colors";
 
 export interface PostData {
   id: string;
   content: string;
   image_url: string;
+  created_at: string;
 }
 
 const URL_REGEX = RegExp('https:\/\/(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/[^\s]*)?');
@@ -32,16 +33,29 @@ export const Post: React.FunctionComponent<Props> = ({ post, onDelete }) => {
     handleClose();
   }
 
+  const createdDate = new Date(post.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+
   return (
-    <Box key={post.id} sx={{ backgroundColor: 'white', padding: 1 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'end' }}>
-        <IconButton aria-label="more-menu-toggle" id="more-menu-toggle"
-          aria-controls={open ? 'more-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={handleClick}>
-          <MoreHoriz />
-        </IconButton>
+    <Box>
+      <Card>
+        <CardHeader
+          avatar={
+            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+              R
+            </Avatar>
+          }
+          action={
+            <IconButton aria-label="more-menu-toggle" id="more-menu-toggle"
+              aria-controls={open ? 'more-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              onClick={handleClick}>
+              <MoreHoriz />
+            </IconButton>
+          }
+          title="Shrimp and Chorizo Paella"
+          subheader={createdDate}
+        />
         <Menu
           id="more-menu"
           anchorEl={anchorEl}
@@ -58,17 +72,19 @@ export const Post: React.FunctionComponent<Props> = ({ post, onDelete }) => {
             <ListItemText>Delete</ListItemText>
           </MenuItem>
         </Menu>
-      </Box>
-      <Typography color='InfoText'>
-        {post.content}
-      </Typography>
-      <CldImage
-        width="960"
-        height="600"
-        src={post.image_url}
-        sizes="100vw"
-        alt="Description of my image"
-      />
+        <CldImage
+          width="960"
+          height="600"
+          src={post.image_url}
+          sizes="100vw"
+          alt="Description of my image"
+        />
+        <CardContent>
+          <Typography variant="body2" color="text.secondary">
+            {post.content}
+          </Typography>
+        </CardContent>
+      </Card>
     </Box>
   )
 }

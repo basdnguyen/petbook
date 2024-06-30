@@ -152,7 +152,7 @@ export default function Home() {
           </Toolbar>
         </Container>
       </AppBar>
-      <Container maxWidth='sm' sx={{ display: 'flex', flexDirection: 'column', gap: '4px', padding: 0, overflowY: 'auto', flex: '1 1 auto' }}>
+      <Container maxWidth='sm' sx={{ display: 'flex', flexDirection: 'column', gap: 1, padding: 0, overflowY: 'auto', flex: '1 1 auto' }}>
         {user && (
           <Box maxWidth='sm' sx={{
             display: 'flex',
