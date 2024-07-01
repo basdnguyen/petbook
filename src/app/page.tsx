@@ -1,15 +1,13 @@
 'use client';
 
 import { Post, PostData } from "@/components/Post";
-import { AppBar, Avatar, Box, Button, Container, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, TextField, Toolbar, Typography } from "@mui/material";
+import { Box, Button, Container, TextField } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { CldImage, CldUploadWidget } from 'next-cloudinary';
 import axios from "axios";
-import Image from "next/image";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/components/AppContext";
-import { blue } from "@mui/material/colors";
-import { Delete, Logout } from "@mui/icons-material";
+import { AppBar } from "@/components/AppBar";
 
 export default function Home() {
 
@@ -17,7 +15,7 @@ export default function Home() {
   const [imagePublicId, setImagePublicId] = useState('');
   const [isPosting, setIsPosting] = useState(false);
   const [message, setMessage] = useState('');
-  const { user, jwt, setJwt, setUser } = useContext(AppContext);
+  const { user, jwt } = useContext(AppContext);
 
   const loadPosts = async () => {
     const { data } = await axios.get('/api/posts');
@@ -63,21 +61,6 @@ export default function Home() {
     setIsPosting(false);
   }
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogOut = () => {
-    setUser(null);
-    setJwt(null);
-    localStorage.removeItem('jwt');
-  }
-
   return (
     <Container disableGutters maxWidth={false} sx={{
       height: '100vh',
@@ -87,51 +70,7 @@ export default function Home() {
       gap: 1,
       paddingBottom: 3,
     }}>
-      <AppBar position="sticky" sx={{ backgroundColor: 'white', paddingX: 5 }}>
-        <Toolbar disableGutters>
-          <Image src='/icon.ico' alt='logo' width={30} height={30}></Image>
-          <Box sx={{ flexGrow: 1 }}></Box>
-          <Box sx={{
-            display: 'flex',
-            gap: 1,
-            alignItems: 'center'
-          }}>
-            {user && (
-              <>
-                <IconButton aria-label="more-menu-toggle" id="more-menu-toggle"
-                  aria-controls={open ? 'more-menu' : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? 'true' : undefined}
-                  onClick={handleClick}>
-                  <Avatar src='' sx={{ bgcolor: blue[500] }}>{user.first_name[0]}</Avatar>
-                </IconButton>
-                <Menu
-                  id="more-menu"
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleClose}
-                  MenuListProps={{
-                    'aria-labelledby': 'more-menu-toggle',
-                  }}
-                >
-                  <MenuItem onClick={handleLogOut}>
-                    <ListItemIcon>
-                      <Logout fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Log Out</ListItemText>
-                  </MenuItem>
-                </Menu>
-              </>
-            )}
-            {!user && (
-              <>
-                <Button variant="outlined" href="/login">Log In</Button>
-                <Button variant="contained" href="/signup">Sign Up</Button>
-              </>
-            )}
-          </Box>
-        </Toolbar>
-      </AppBar>
+      <AppBar />
       <Container maxWidth='sm' sx={{ display: 'flex', flexDirection: 'column', gap: 1, padding: 0, flex: '1 1 auto' }}>
         {user && (
           <Box maxWidth='sm' sx={{
