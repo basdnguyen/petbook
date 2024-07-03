@@ -21,10 +21,11 @@ export const PostCreate = ({ onPostCreated }: Props) => {
       quiet: true,
     });
     setImagePublicId(result.info?.public_id);
+    setMessage('');
   }
 
-  function deleteUploadImage() {
-
+  async function deleteUploadImage() {
+    setImagePublicId('');
   }
 
   function onChangeMessage(event: React.ChangeEvent<HTMLInputElement>) {
