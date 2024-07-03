@@ -9,6 +9,7 @@ import './globals.css';
 import { AppContext, User } from "@/components/AppContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -46,6 +47,7 @@ export default function RootLayout({
         <AppContext.Provider value={{ user, setUser, jwt, setJwt }}>
           {children}
         </AppContext.Provider>
+        <GoogleAnalytics gaId="G-676KQMK02T" />
       </body>
     </html>
   );
