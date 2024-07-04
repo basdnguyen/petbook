@@ -33,8 +33,8 @@ export default function LogIn() {
   }
   const formik = useFormik({
     initialValues: {
-      email: 'guest.welcome@petbook.com',
-      password: '123456'
+      email: 'cameron.blake@petbook.com',
+      password: 'B3@NB9BC3pagJCT'
     },
     onSubmit: logIn,
   });
