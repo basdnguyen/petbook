@@ -7,7 +7,6 @@ import { AppContext } from "../AppContext";
 
 export const AppBar = () => {
   const { user, setJwt, setUser } = useContext(AppContext);
-  console.log({user})
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
