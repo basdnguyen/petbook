@@ -18,10 +18,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null | undefined>(undefined);
   const [jwt, setJwt] = useState<string | null>(null);
   useEffect(() => {
-    setJwt(localStorage.getItem('jwt'));
+    const jwtFromStorage = localStorage.getItem('jwt');
+    if (jwtFromStorage) {
+      setJwt(jwtFromStorage);
+    } else {
+      setUser(null);
+    }
   }, []);
 
   async function getMeUser() {
@@ -32,6 +37,7 @@ export default function RootLayout({
     }); 
     setUser(data);
   }
+
   useEffect(() => {
     if (jwt) {
       getMeUser();

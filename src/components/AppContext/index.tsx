@@ -8,14 +8,14 @@ export interface User {
 }
 
 export interface AppState {
-  user: User | null;
+  user: User | null | undefined;
   setUser: (user: User | null) => void;
   jwt: string | null;
   setJwt: (jwt: string | null) => void;
 }
 
 export const AppContext = createContext<AppState>({
-  user: null,
+  user: undefined,
   setUser: () => {},
   jwt: null,
   setJwt: () => {},

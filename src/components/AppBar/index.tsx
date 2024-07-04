@@ -6,7 +6,8 @@ import { useContext, useState } from "react";
 import { AppContext } from "../AppContext";
 
 export const AppBar = () => {
-  const { user, jwt, setJwt, setUser } = useContext(AppContext);
+  const { user, setJwt, setUser } = useContext(AppContext);
+  console.log({user})
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -59,7 +60,7 @@ export const AppBar = () => {
                 </Menu>
               </>
             )}
-            {!user && (
+            {user === null && (
               <>
                 <Button variant="outlined" href="/login">Log In</Button>
                 <Button variant="contained" href="/signup">Sign Up</Button>
