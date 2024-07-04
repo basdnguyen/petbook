@@ -53,7 +53,7 @@ export default function RootLayout({
         <AppContext.Provider value={{ user, setUser, jwt, setJwt }}>
           {children}
         </AppContext.Provider>
-        <GoogleAnalytics gaId="G-676KQMK02T" />
+        <GoogleAnalytics gaId="GT-PBKHLLKF" />
       </body>
     </html>
   );
