@@ -1,22 +1,26 @@
 'use client';
 
 import { Post, PostData } from "@/components/Post";
-import { Container } from "@mui/material";
+import { Box, Container, Skeleton } from "@mui/material";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/components/AppContext";
 import { AppBar } from "@/components/AppBar";
 import { PostCreate } from "@/components/PostCreate";
+import { PostSkeleton } from "@/components/PostSkeleton";
 
 export default function Home() {
 
   const [posts, setPosts] = useState<PostData[]>([]);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
 
   const { user } = useContext(AppContext);
 
   const loadPosts = async () => {
+    setIsLoadingPosts(true);
     const { data } = await axios.get('/api/posts');
     setPosts(data);
+    setIsLoadingPosts(false);
   }
 
   useEffect(() => {
@@ -42,7 +46,8 @@ export default function Home() {
         {user && (
           <PostCreate onPostCreated={loadPosts} />
         )}
-        {posts.map(post => <Post key={post.id} post={post} onDelete={deletePost} />)}
+        {isLoadingPosts && [...Array(3)].map((_, index) => <PostSkeleton key={index} />)}
+        {!isLoadingPosts && posts.map(post => <Post key={post.id} post={post} onDelete={deletePost} />)}
       </Container>
     </Container>
   );
