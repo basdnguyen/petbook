@@ -83,7 +83,7 @@ export const PostCreate = ({ onPostCreated }: Props) => {
               <Delete />
             </Button>
             <TextField
-              required
+              multiline
               id="message"
               placeholder="Say something about the image"
               value={message}
