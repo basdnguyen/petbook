@@ -16,8 +16,10 @@ interface FormData {
 export default function LogIn() {
   const router = useRouter();
   const { setUser } = useContext(AppContext);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const logIn = async (values: FormData) => {
+    setIsProcessing(true);
     const { data: { jwt } } = await axios.post('/api/login', values);
     localStorage.setItem('jwt', jwt);
     const { data } = await axios.get('/api/me', {
@@ -26,6 +28,7 @@ export default function LogIn() {
       }
     });
     setUser(data);
+    setIsProcessing(false);
     router.push('/');
   }
   const formik = useFormik({
@@ -83,7 +86,7 @@ export default function LogIn() {
           />
         </FormControl>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
-          <Button variant="contained" type="submit">Log in</Button>
+          <Button variant="contained" type="submit" disabled={isProcessing}>Log in</Button>
         </Box>
       </Container>
     </form>
