@@ -3,7 +3,6 @@ import { sql } from "@vercel/postgres";
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const secretKey = 'your_secret_key';
  
 export default async function handler(
   req: NextApiRequest,
@@ -24,7 +23,7 @@ export default async function handler(
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
-    }, secretKey, { expiresIn: '1h' });
+    }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
     res.status(200).send({ jwt: token });
     return;
   }
