@@ -1,11 +1,12 @@
 'use client';
 
 import { AppContext } from "@/components/AppContext";
-import { Box, Button, Container, TextField } from "@mui/material";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
+import { Box, Button, Container, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material";
 import axios from "axios";
 import { useFormik } from "formik";
 import { useRouter } from 'next/navigation';
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 interface FormData {
   email: string;
@@ -23,7 +24,7 @@ export default function LogIn() {
       headers: {
         Authorization: `Bearer ${jwt}`,
       }
-    }); 
+    });
     setUser(data);
     router.push('/');
   }
@@ -34,6 +35,15 @@ export default function LogIn() {
     },
     onSubmit: logIn,
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
   return (
     <form onSubmit={formik.handleSubmit} className='flex flex-1 flex-col justify-center'>
       <Container maxWidth='sm' sx={{
@@ -49,13 +59,29 @@ export default function LogIn() {
           onChange={formik.handleChange}
           value={formik.values.email}
         />
-        <TextField
-          required
-          id="password"
-          label="Password"
-          onChange={formik.handleChange}
-          value={formik.values.password}
-        />
+        <FormControl>
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <OutlinedInput
+            required
+            id="password"
+            label="Password"
+            onChange={formik.handleChange}
+            value={formik.values.password}
+            type={showPassword ? 'text' : 'password'}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </FormControl>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
           <Button variant="contained" type="submit">Log in</Button>
         </Box>
