@@ -15,6 +15,7 @@
     "@mui/icons-material": "^5.15.20",
     "@mui/material": "^5.15.20",
     "@next/third-parties": "^14.2.4",
+    "@prisma/client": "^5.16.1",
     "@vercel/postgres": "^0.8.0",
     "axios": "^1.7.2",
     "bcrypt": "^5.1.1",

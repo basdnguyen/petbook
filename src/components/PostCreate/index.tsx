@@ -32,7 +32,7 @@ export const PostCreate = ({ onPostCreated }: Props) => {
     setMessage(event.target.value);
   }
 
-  async function doPost() {
+  const doPost = async () => {
     setIsPosting(true);
     await axios.post('/api/posts', {
       content: message,

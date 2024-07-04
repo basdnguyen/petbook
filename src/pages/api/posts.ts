@@ -1,6 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { sql } from "@vercel/postgres";
 import jwtLibrary, { JwtPayload } from 'jsonwebtoken';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
  
 export default async function handler(
   req: NextApiRequest,
@@ -18,12 +21,16 @@ export default async function handler(
     }
     const userFromJwt = jwtLibrary.verify(jwt, process.env.JWT_SECRET_KEY) as JwtPayload;
     const { content, image_url } = req.body;
-    await sql`INSERT INTO posts (content, image_url, author_id)
-      VALUES (${content}, ${image_url}, ${userFromJwt.id});
-    `;
+    await prisma.posts.create({ data: {
+      content, image_url, author_id: userFromJwt.id
+    }});
     res.status(204).end();
   } else {
-    const { rows } = await sql`SELECT * FROM POSTS ORDER BY created_at DESC`;
-    res.status(200).json(rows);
+    const posts = await prisma.posts.findMany({
+      orderBy: {
+        created_at: 'desc'
+      }
+    });
+    res.status(200).json(posts);
   }
 }

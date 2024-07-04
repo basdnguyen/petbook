@@ -15,7 +15,7 @@ interface FormData {
 
 export default function LogIn() {
   const router = useRouter();
-  const { setUser } = useContext(AppContext);
+  const { setUser, setJwt } = useContext(AppContext);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const logIn = async (values: FormData) => {
@@ -28,6 +28,7 @@ export default function LogIn() {
       }
     });
     setUser(data);
+    setJwt(jwt);
     setIsProcessing(false);
     router.push('/');
   }

@@ -23,7 +23,7 @@ export default async function handler(
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
-    }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+    }, process.env.JWT_SECRET_KEY);
     res.status(200).send({ jwt: token });
     return;
   }
