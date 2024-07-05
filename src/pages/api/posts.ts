@@ -1,5 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { sql } from "@vercel/postgres";
+import type { NextApiRequest, NextApiResponse } from 'next';
 import jwtLibrary, { JwtPayload } from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 

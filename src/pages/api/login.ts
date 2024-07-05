@@ -1,21 +1,25 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { sql } from "@vercel/postgres";
+import { PrismaClient } from '@prisma/client';
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const prisma = new PrismaClient();
  
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { password, email } = req.body;
-  const { rows } = await sql`SELECT * from users WHERE email = ${email}`;
-  if (rows.length === 0) {
+  const user = await prisma.users.findFirst({
+    where: {
+      email
+    }
+  })
+  if (!user) {
     res.status(401)
     .send({ error: 'Unauthorized', message: 'Invalid username or password.' });
     return;
   }
-  const user = rows[0];
   const inputPassword = await bcrypt.hash(password, user.salt);
   if(inputPassword === user.password) {
     const token = jwt.sign( {

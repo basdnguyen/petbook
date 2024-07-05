@@ -16,9 +16,12 @@ interface FormData {
 
 export default function SignUp() {
   const router = useRouter();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const signUp = async (values: FormData) => {
+    setIsProcessing(true);
     await axios.post('/api/signup', values);
+    setIsProcessing(false);
     router.push('/login');
   }
   const formik = useFormik({
@@ -99,7 +102,7 @@ export default function SignUp() {
             id="confirm_password"
             label="Confirm password"
             onChange={formik.handleChange}
-            value={formik.values.password}
+            value={formik.values.confirm_password}
             type={showPassword ? 'text' : 'password'}
             endAdornment={
               <InputAdornment position="end">
@@ -116,7 +119,7 @@ export default function SignUp() {
           />
         </FormControl>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
-          <Button variant="contained" type="submit">Sign up</Button>
+          <Button variant="contained" type="submit" disabled={isProcessing}>Sign up</Button>
         </Box>
       </Container>
     </form>
