@@ -26,9 +26,12 @@ export default async function handler(
     res.status(204).end();
   } else {
     const posts = await prisma.posts.findMany({
+      include: {
+        author: true,
+      },
       orderBy: {
         created_at: 'desc'
-      }
+      },
     });
     res.status(200).json(posts);
   }

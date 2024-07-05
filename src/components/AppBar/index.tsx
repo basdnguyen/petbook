@@ -39,7 +39,7 @@ export const AppBar = () => {
                   aria-haspopup="true"
                   aria-expanded={open ? 'true' : undefined}
                   onClick={handleClick}>
-                  <Avatar src='' sx={{ bgcolor: blue[500] }}>{user.first_name[0]}</Avatar>
+                  <Avatar src='' sx={{ bgcolor: blue[500] }}>{`${user.first_name[0]}${user.last_name[0]}`}</Avatar>
                 </IconButton>
                 <Menu
                   id="more-menu"

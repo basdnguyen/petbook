@@ -9,6 +9,10 @@ export interface PostData {
   content: string;
   image_url: string;
   created_at: string;
+  author: {
+    first_name: string;
+    last_name: string;
+  };
 }
 
 interface Props {
@@ -39,7 +43,7 @@ export const Post: React.FunctionComponent<Props> = ({ post, onDelete }) => {
         <CardHeader
           avatar={
             <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-              R
+              {`${post.author?.first_name[0]}${post.author?.last_name[0]}`}
             </Avatar>
           }
           action={
@@ -51,7 +55,7 @@ export const Post: React.FunctionComponent<Props> = ({ post, onDelete }) => {
               <MoreHoriz />
             </IconButton>
           }
-          title="Shrimp and Chorizo Paella"
+          title={`${post.author?.first_name} ${post.author?.last_name}`}
           subheader={createdDate}
         />
         <Menu
