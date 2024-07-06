@@ -1,7 +1,7 @@
 'use client';
 
 import { Post, PostData } from "@/components/Post";
-import { Box, Container, Skeleton } from "@mui/material";
+import { Container } from "@mui/material";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/components/AppContext";
@@ -14,7 +14,7 @@ export default function Home() {
   const [posts, setPosts] = useState<PostData[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState(true);
 
-  const { user } = useContext(AppContext);
+  const { user, jwt } = useContext(AppContext);
 
   const loadPosts = async () => {
     setIsLoadingPosts(true);
@@ -28,7 +28,11 @@ export default function Home() {
   }, []);
 
   const deletePost = async (post: PostData) => {
-    await axios.delete(`/api/post/${post.id}`);
+    await axios.delete(`/api/post/${post.id}`, {
+      headers: {
+        Authorization: `Bearer ${jwt}`
+      }
+    });
     loadPosts();
   }
 

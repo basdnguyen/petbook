@@ -1,4 +1,5 @@
-import jwtLibrary from 'jsonwebtoken';
+import { authenticateUser } from '@/utils';
+import { HttpStatusCode } from 'axios';
 import type { NextApiRequest, NextApiResponse } from 'next';
  
 export default async function handler(
@@ -6,19 +7,18 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === 'GET') {
-    const jwt = req.headers.authorization?.split(' ')[1];
-    if (!jwt) {
-      res.status(405).end();
-      return;
+    const authenticatedUser = await authenticateUser(req);
+    if (authenticatedUser) {
+      res.status(HttpStatusCode.Ok).json({
+        id: authenticatedUser.id,
+        email: authenticatedUser.email,
+        first_name: authenticatedUser.first_name,
+        last_name: authenticatedUser.last_name,
+      });
+    } else {
+      res.status(HttpStatusCode.Unauthorized).end();
     }
-    if (!process.env.JWT_SECRET_KEY) {
-      res.status(500).end();
-      return;
-    }
-    
-    const userFromJwt = jwtLibrary.verify(jwt, process.env.JWT_SECRET_KEY);
-    res.status(200).json(userFromJwt);
   } else {
-    res.status(405).end();
+    res.status(HttpStatusCode.MethodNotAllowed).end();
   }
 }

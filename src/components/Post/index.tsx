@@ -1,15 +1,17 @@
 import { MoreHoriz, Delete } from "@mui/icons-material"
 import { Avatar, Box, Card, CardContent, CardHeader, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Typography } from "@mui/material"
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { CldImage } from "next-cloudinary";
 import { red } from "@mui/material/colors";
+import { AppContext } from "../AppContext";
 
 export interface PostData {
-  id: string;
+  id: number;
   content: string;
   image_url: string;
   created_at: string;
   author: {
+    id: number;
     first_name: string;
     last_name: string;
   };
@@ -22,6 +24,8 @@ interface Props {
 }
 
 export const Post: React.FunctionComponent<Props> = ({ post, onDelete }) => {
+  const { user } = useContext(AppContext);
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -35,7 +39,8 @@ export const Post: React.FunctionComponent<Props> = ({ post, onDelete }) => {
     handleClose();
   }
 
-  const createdDate = new Date(post.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  const createdDate = new Date(post.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const canDelete = post.author.id === user?.id;
 
   return (
     <Box>
@@ -47,13 +52,13 @@ export const Post: React.FunctionComponent<Props> = ({ post, onDelete }) => {
             </Avatar>
           }
           action={
-            <IconButton aria-label="more-menu-toggle" id="more-menu-toggle"
+            canDelete ? <IconButton aria-label="more-menu-toggle" id="more-menu-toggle"
               aria-controls={open ? 'more-menu' : undefined}
               aria-haspopup="true"
               aria-expanded={open ? 'true' : undefined}
               onClick={handleClick}>
               <MoreHoriz />
-            </IconButton>
+            </IconButton> : null
           }
           title={`${post.author?.first_name} ${post.author?.last_name}`}
           subheader={createdDate}

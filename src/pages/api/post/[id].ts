@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '@/utils/prisma';
+import { authenticateUser } from '@/utils';
+import { HttpStatusCode } from 'axios';
  
 export default async function handler(
   req: NextApiRequest,
@@ -10,8 +10,19 @@ export default async function handler(
   if (req.method === 'DELETE') {
     const { id: idQuery } = req.query;
     const id = Array.isArray(idQuery) ? idQuery[0] : idQuery;
-    if (!id) {
-      res.status(404).end();
+    const post = await prisma.post.findFirst({
+      where: {
+        id: Number(id)
+      }
+    });
+    if (!post) {
+      res.status(HttpStatusCode.NotFound).end();
+      return;
+    }
+    const authenticatedUser = await authenticateUser(req);
+
+    if (!authenticatedUser || authenticatedUser.id !== post.author_id) {
+      res.status(HttpStatusCode.Unauthorized).end();
       return;
     }
     await prisma.post.delete({
@@ -19,8 +30,8 @@ export default async function handler(
         id: Number(id),
       }
     });
-    res.status(204).end();
+    res.status(HttpStatusCode.NoContent).end();
   } else {
-    res.status(200).end();
+    res.status(HttpStatusCode.MethodNotAllowed).end();
   }
 }
