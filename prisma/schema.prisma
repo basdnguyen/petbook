@@ -8,16 +8,16 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-model posts {
+model Post {
   id         Int       @id @default(autoincrement())
   content    String?
   created_at DateTime? @default(now()) @db.Timestamp(6)
   image_url  String?
   author_id  Int @default(0)
-  author    users     @relation(fields: [author_id], references: [id])
+  author    User     @relation(fields: [author_id], references: [id])
 }
 
-model users {
+model User {
   id            Int     @id @default(autoincrement())
   first_name    String  @db.VarChar(50)
   last_name     String  @db.VarChar(50)
@@ -25,5 +25,5 @@ model users {
   password      String  @db.VarChar(255)
   profile_image String?
   salt          String  @db.VarChar(255)
-  posts posts[]
+  posts Post[]
 }

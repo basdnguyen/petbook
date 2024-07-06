@@ -12,7 +12,7 @@ export default async function handler(
   const { password, first_name, last_name, email } = req.body;
   const salt = await bcrypt.genSalt(saltRounds);
   const hashedPassword = await bcrypt.hash(password, salt);
-  await prisma.users.create({
+  await prisma.user.create({
     data: {
       first_name,
       last_name,

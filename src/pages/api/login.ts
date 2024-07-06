@@ -10,7 +10,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { password, email } = req.body;
-  const user = await prisma.users.findFirst({
+  const user = await prisma.user.findFirst({
     where: {
       email
     }

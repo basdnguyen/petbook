@@ -20,12 +20,12 @@ export default async function handler(
     }
     const userFromJwt = jwtLibrary.verify(jwt, process.env.JWT_SECRET_KEY) as JwtPayload;
     const { content, image_url } = req.body;
-    await prisma.posts.create({ data: {
+    await prisma.post.create({ data: {
       content, image_url, author_id: userFromJwt.id
     }});
     res.status(204).end();
   } else {
-    const posts = await prisma.posts.findMany({
+    const posts = await prisma.post.findMany({
       include: {
         author: true,
       },

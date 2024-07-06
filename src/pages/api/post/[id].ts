@@ -14,7 +14,7 @@ export default async function handler(
       res.status(404).end();
       return;
     }
-    await prisma.posts.delete({
+    await prisma.post.delete({
       where: {
         id: Number(id),
       }
