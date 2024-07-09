@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/github/basdnguyen/petbook/graph/badge.svg?token=A0LEUZIB1O)](https://codecov.io/github/basdnguyen/petbook)
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) and deployed to Vercel.
 
 ## Technical Stacks
