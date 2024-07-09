@@ -7,7 +7,6 @@ import { AppContext } from "../AppContext";
 
 export const AppBar = () => {
   const { user, setJwt, setUser } = useContext(AppContext);
-  const { palette } = useTheme();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
