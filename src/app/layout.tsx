@@ -7,9 +7,9 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import './globals.css';
 import { AppContext, User } from "@/components/AppContext";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,29 +20,6 @@ export default function RootLayout({
 }>) {
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [jwt, setJwt] = useState<string | null>(null);
-  useEffect(() => {
-    const jwtFromStorage = localStorage.getItem('jwt');
-    if (jwtFromStorage) {
-      setJwt(jwtFromStorage);
-    } else {
-      setUser(null);
-    }
-  }, []);
-
-  async function getMeUser() {
-    const { data } = await axios.get('/api/me', {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      }
-    }); 
-    setUser(data);
-  }
-
-  useEffect(() => {
-    if (jwt) {
-      getMeUser();
-    }
-  }, [jwt]);
 
   return (
     <html lang="en">
@@ -50,9 +27,11 @@ export default function RootLayout({
         <link rel="icon" href="/icon.ico" sizes="any" />
       </head>
       <body className={`${inter.className}`}>
-        <AppContext.Provider value={{ user, setUser, jwt, setJwt }}>
-          {children}
-        </AppContext.Provider>
+        <GoogleOAuthProvider clientId="559885226942-qcmgk5rh5us4c6se69hk20v6ckh5p9u1.apps.googleusercontent.com">
+          <AppContext.Provider value={{ user, setUser, jwt, setJwt }}>
+            {children}
+          </AppContext.Provider>
+        </GoogleOAuthProvider>
         <GoogleAnalytics gaId="GT-PBKHLLKF" />
       </body>
     </html>

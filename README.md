@@ -15,6 +15,11 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 #### Database
 * A Postgres Database is provided by Vercel
 * Primsa ORM is used to easily interact with the database
+To modify the database schema, follow these steps:
+1. Modify prisma/schema.prisma
+2. Run `npx prisma migrate dev --name <migration-name>`
+3. Run `npx prisma migrate deploy`
+4. Run `npx prisma generate`
 
 ## Getting Started
 

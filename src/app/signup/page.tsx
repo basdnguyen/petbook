@@ -8,6 +8,7 @@ import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CldImage } from "next-cloudinary";
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 
 interface FormData {
   first_name: string;
@@ -46,6 +47,20 @@ export default function SignUp() {
     event.preventDefault();
   };
 
+  const onGoogleSignIn = async (credentialResponse: CredentialResponse) => {
+    setIsProcessing(true);
+    const { data: { jwt } } = await axios.post('/api/auth/google', {
+      token: credentialResponse.credential,
+      client_id: credentialResponse.clientId,
+    });
+    localStorage.setItem('jwt', jwt);
+    setIsProcessing(false);
+    router.push('/');
+  }
+
+  const onError = () => {
+  }
+
   return (
     <Grid2 container minHeight={'100vh'}>
       <Grid2 flex={1} sx={{ backgroundColor: palette.background.default }} container alignItems={'center'}>
@@ -82,55 +97,58 @@ export default function SignUp() {
               value={formik.values.email}
             />
             <Grid2 container gap={2}>
-            <FormControl className="flex-1">
-              <InputLabel htmlFor="password">Password</InputLabel>
-              <OutlinedInput
-                required
-                id="password"
-                label="Password"
-                onChange={formik.handleChange}
-                value={formik.values.password}
-                type={showPassword ? 'text' : 'password'}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-            <FormControl className="flex-1">
-              <InputLabel htmlFor="confirm_password">Confirm password</InputLabel>
-              <OutlinedInput
-                required
-                id="confirm_password"
-                label="Confirm password"
-                onChange={formik.handleChange}
-                value={formik.values.confirm_password}
-                type={showPassword ? 'text' : 'password'}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
+              <FormControl className="flex-1">
+                <InputLabel htmlFor="password">Password</InputLabel>
+                <OutlinedInput
+                  required
+                  id="password"
+                  label="Password"
+                  onChange={formik.handleChange}
+                  value={formik.values.password}
+                  type={showPassword ? 'text' : 'password'}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+              <FormControl className="flex-1">
+                <InputLabel htmlFor="confirm_password">Confirm password</InputLabel>
+                <OutlinedInput
+                  required
+                  id="confirm_password"
+                  label="Confirm password"
+                  onChange={formik.handleChange}
+                  value={formik.values.confirm_password}
+                  type={showPassword ? 'text' : 'password'}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
             </Grid2>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
               <Button variant="contained" type="submit" disabled={isProcessing}>Sign up</Button>
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
+              <GoogleLogin onSuccess={onGoogleSignIn} onError={onError}/>
             </Box>
           </Container>
         </form>

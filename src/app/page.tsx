@@ -8,6 +8,7 @@ import { AppContext } from "@/components/AppContext";
 import { AppBar } from "@/components/AppBar";
 import { PostCreate } from "@/components/PostCreate";
 import { PostSkeleton } from "@/components/PostSkeleton";
+import { Authentication } from "@/components/Authentication";
 
 export default function Home() {
 
@@ -37,22 +38,24 @@ export default function Home() {
   }
 
   return (
-    <Container disableGutters maxWidth={false} sx={{
-      height: '100vh',
-      overflowY: 'auto',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 1,
-      paddingBottom: 3,
-    }}>
-      <AppBar />
-      <Container maxWidth='sm' sx={{ display: 'flex', flexDirection: 'column', gap: 1, padding: 0, flex: '1 1 auto' }}>
-        {user && (
-          <PostCreate onPostCreated={loadPosts} />
-        )}
-        {isLoadingPosts && [...Array(3)].map((_, index) => <PostSkeleton key={index} />)}
-        {!isLoadingPosts && posts.map(post => <Post key={post.id} post={post} onDelete={deletePost} />)}
+    <Authentication>
+      <Container disableGutters maxWidth={false} sx={{
+        height: '100vh',
+        overflowY: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1,
+        paddingBottom: 3,
+      }}>
+        <AppBar />
+        <Container maxWidth='sm' sx={{ display: 'flex', flexDirection: 'column', gap: 1, padding: 0, flex: '1 1 auto' }}>
+          {user && (
+            <PostCreate onPostCreated={loadPosts} />
+          )}
+          {isLoadingPosts && [...Array(3)].map((_, index) => <PostSkeleton key={index} />)}
+          {!isLoadingPosts && posts.map(post => <Post key={post.id} post={post} onDelete={deletePost} />)}
+        </Container>
       </Container>
-    </Container>
+    </Authentication>
   );
 }
