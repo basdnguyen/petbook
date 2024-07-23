@@ -1,14 +1,14 @@
 'use client';
 
 import { VisibilityOff, Visibility } from "@mui/icons-material";
-import { Box, Button, Container, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, useTheme } from "@mui/material";
+import { Box, Button, Container, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Typography, useTheme } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import axios from "axios";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CldImage } from "next-cloudinary";
-import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
+import { ButtonGoogleSignIn } from "@/components/ButtonGoogleSignIn";
 
 interface FormData {
   first_name: string;
@@ -47,19 +47,7 @@ export default function SignUp() {
     event.preventDefault();
   };
 
-  const onGoogleSignIn = async (credentialResponse: CredentialResponse) => {
-    setIsProcessing(true);
-    const { data: { jwt } } = await axios.post('/api/auth/google', {
-      token: credentialResponse.credential,
-      client_id: credentialResponse.clientId,
-    });
-    localStorage.setItem('jwt', jwt);
-    setIsProcessing(false);
-    router.push('/');
-  }
 
-  const onError = () => {
-  }
 
   return (
     <Grid2 container minHeight={'100vh'}>
@@ -147,8 +135,17 @@ export default function SignUp() {
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
               <Button variant="contained" type="submit" disabled={isProcessing}>Sign up</Button>
             </Box>
+            <Grid2 container flexDirection={'row'} alignItems={'center'} gap={1}>
+              <Grid2 flex={1}>
+                <hr></hr>
+              </Grid2>
+              <Typography>or</Typography>
+              <Grid2 flex={1}>
+                <hr></hr>
+              </Grid2>
+            </Grid2>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}>
-              <GoogleLogin onSuccess={onGoogleSignIn} onError={onError}/>
+              <ButtonGoogleSignIn setIsProcessing={setIsProcessing} />
             </Box>
           </Container>
         </form>
